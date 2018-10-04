@@ -37,4 +37,3 @@ function fillOut(){
 	}	
 }
 
-export {getRandomArbitrary, fillOut}
