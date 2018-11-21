@@ -39,10 +39,25 @@
                             font-weight: 600;\
                             position: fixed;\
                         }\
+                        .modalButton{\
+                            width: 45%;\
+                            border: 1px solid white;\
+                            border-radius: 5px;\
+                            cursor: pointer;\
+                            font-weight: 400;\
+                            text-align: center;\
+                        }\
                         .modalText{\
                             margin-top: 10px;\
                             text-align: center;\
                             display: block;\
+                            width: 95%;\
+                        }\
+                        #errorMessage{\
+                            color: red;\
+                        }\
+                        .hidden{\
+                            display: none;\
                         }';
 
             this.getElements();
@@ -61,10 +76,32 @@
             modal.id = "modal";
 
             let modalText = document.createElement('span');
-            modalText.classList.add('modalText');
-            modalText.innerText = "Eloqua Form Fill";
+            {
+                modalText.classList.add('modalText');
+                modalText.innerText = "Eloqua Form Fill by Nils<3";
+            }
 
-            modal.insertAdjacentElement('afterbegin', modalText);
+            let modalButtons = [];
+
+                modalButtons.push(document.createElement('span'));
+                modalButtons.push(document.createElement('span'));
+                modalButtons[0].id='fillButton';
+                modalButtons[1].id='settingsButton';
+                modalButtons[0].classList.add('modalButton');
+                modalButtons[1].classList.add('modalButton');
+                modalButtons[0].innerText = "Fill Out";
+                modalButtons[1].innerText = "Settings";
+                modalButtons[0].addEventListener('click',this.fillOut.bind(this));
+
+            let errorMessage = document.createElement('span');
+            errorMessage.classList.add('hidden');
+            errorMessage.id = "errorMessage";
+            errorMessage.innerText = "Please provide your Email.";
+
+            modal.insertAdjacentElement('beforeend', modalText);
+            modal.insertAdjacentElement('beforeend', modalButtons[0]);
+            modal.insertAdjacentElement('beforeend', modalButtons[1]);
+            modal.insertAdjacentElement('beforeend', errorMessage);
 
             return {html: modal, css: style};
         }
@@ -88,7 +125,7 @@
 
         getElements(){
             //gets and sorts all the input fields of the form
-            for(let i = 0;i < this.inputElements.all.length; i++){
+            for(let i = 0;i < this.inputElements.all.length; i++){ //Cannot read property 'all' of undefined??
                 if(this.inputElements.all[i].type === 'email'){
                     this.inputElements.email = this.inputElements.all[i];
                 }
@@ -103,6 +140,7 @@
 
         fillOut(){
             // fills out the form with the relevant data
+            console.log('trigger');
             for(let i = 0; i< this.inputElements.all.length; i++){
                 let type = this.inputElements.all[i].type;
     
@@ -110,9 +148,12 @@
                     this.inputElements.all[i].value = "ELTest";
                 }
                 else if(type === 'email'){
-                    if (cache !== null){
+                    if (this.userEmail !== null){
                         this.inputElements.all[i].value = this.userEmail;
                         // HIER FEHLT NOCH WAS
+                    }
+                    else{
+                        this.view.modal.errorMessage.classList.remove('hidden')
                     }
                 }
                 else if(type === 'select-one'){
@@ -133,51 +174,6 @@
             }
         }
     }
-
-    //-----HELPER FUNCTIONS------
-    // random arbitrary
-    // function getRandomArbitrary(min, max) {
-    //     let o = Math.round(Math.random() * (max - min) + min);
-    //     if(o===1){
-    //         return false;
-    //     }
-    //     else{
-    //         return true;
-    //     }
-    // }
-
-    // let div = document.createElement('div');
-    // div.style = "z-index: 9999; top:0; right:0; height: 100px; width: 250px; border: 1px solid black; background-color: white; position: fixed; ";
-    // div.id = 'insertedDiv';
-    // let b = document.querySelector('body');
-
-    // function fillOut(){
-    //     for(let i = 0; i< inputs.length; i++){
-    //         let type = inputs[i].type;
-    //         if(type === 'text'){
-    //             inputs[i].value = "ELTest";
-    //         }
-    //         else if(type === 'email'){
-    //             if (cache !== null){
-    //                 inputs[i].value = userEmail;
-	// 	            hasEmail = true;
-    //             }
-    //         }
-    //         else if(type === 'select-one'){
-    //             if(inputs[i].name !== 'country'){
-    //                 let selected = inputs[i].options[inputs[i].options.length-1];
-    //                 inputs[i].value = selected.getAttribute('value');
-    //                 let parentChildren = inputs[i].parentElement.children;
-    //                 for(let j = 0; j <parentChildren.length; j++){
-    //                     if(parentChildren[j].classList.contains('MMM--fancyDropAnchor')){
-    //                         parentChildren[j].firstChild.textContent = selected.text;
-    //                     }
-    //                 }
-    //             }
-    //         }
-    //         else if(type === "checkbox"){
-    //             inputs[i].checked = getRandomArbitrary(1,2);
-    //         }
-    //     }
-    // }
+    let el = new eloquaFormFill();
+    console.log(el);
 })();
